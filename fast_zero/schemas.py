@@ -10,7 +10,7 @@ class UserSchema(BaseModel):
     email: EmailStr
     password: str
 
-# schema retornado do usuario (nao queremos retornar senha e nao temos ainda id)
+# schema retornado do usuario (nao queremos retornar senha e ainda nao temos id)
 class UserPublic(BaseModel):
     id: int
     username: str

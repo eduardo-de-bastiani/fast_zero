@@ -14,9 +14,22 @@ def test_read_root_must_return_ok():  # TRIPLE A
     assert response.json() == {'message': 'Olá Mundo!'}
 
 
-def test_read_user_must_return_created():
+def test_create_user():
     client = TestClient(app)
 
-    response = client.post('/users/')
+    response = client.post(
+        '/users/',
+        json={
+            'username': 'teste_username',
+            'email': 'emailteste@teste.com',
+            'password': 'senha_teste',
+        },
+    )
 
     assert response.status_code == HTTPStatus.CREATED
+
+    assert response.json() == {
+        'id': 1,
+        'username': 'teste_username',
+        'email': 'emailteste@teste.com',
+    }
