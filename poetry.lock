@@ -362,6 +362,24 @@ files = [
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
+name = "pydentic"
+version = "0.0.1.dev3"
+description = "Pydantic Identifiers"
+optional = false
+python-versions = ">=3.6.1"
+files = [
+    {file = "pydentic-0.0.1.dev3-py3-none-any.whl", hash = "sha256:b37f690f262e02e781deae8588a411c596489bc2837701fbb5e8c59b31b4236e"},
+    {file = "pydentic-0.0.1.dev3.tar.gz", hash = "sha256:4c5ee9c260e3cbcdb2a2d725b1d98046cb2b5298e6d6154449a685cf4cca85ec"},
+]
+
+[package.dependencies]
+python-stdnum = ">=1.16"
+
+[package.extras]
+dev = ["flake8"]
+test = ["pydantic", "pytest"]
+
+[[package]]
 name = "pytest"
 version = "8.3.4"
 description = "pytest: simple powerful testing with Python"
@@ -398,6 +416,22 @@ pytest = ">=4.6"
 
 [package.extras]
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "virtualenv"]
+
+[[package]]
+name = "python-stdnum"
+version = "1.20"
+description = "Python module to handle standardized numbers and codes"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-stdnum-1.20.tar.gz", hash = "sha256:ad2a2cf2eb025de408210235f36b4ae31252de3186240ccaa8126e117cb82690"},
+    {file = "python_stdnum-1.20-py2.py3-none-any.whl", hash = "sha256:111008e10391d54fb2afad2a10df70d5cb0c6c0a7ec82fec6f022cb8712961d3"},
+]
+
+[package.extras]
+soap = ["zeep"]
+soap-alt = ["suds"]
+soap-fallback = ["PySimpleSOAP"]
 
 [[package]]
 name = "ruff"
@@ -526,4 +560,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "5b99128c34f2c3ae28f74cd97fcf9d6ffa4fbc33c6ad34720eaee9c6322f0b39"
+content-hash = "71aaa422ae486a901b520c75da4c60be89670a088207bdf181cdcb63843773dc"
