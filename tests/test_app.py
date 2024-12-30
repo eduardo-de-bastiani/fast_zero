@@ -1,12 +1,8 @@
 from http import HTTPStatus
 
-from fastapi.testclient import TestClient
 
-from fast_zero.app import app
-
-
-def test_read_root_must_return_ok():  # TRIPLE A
-    client = TestClient(app)  # Arrange (organizacao)
+def test_read_root_must_return_ok(client):  # TRIPLE A
+    # client = TestClient(app)  # Arrange (organizacao)
 
     response = client.get('/')  # Act (acao)
 
@@ -14,9 +10,7 @@ def test_read_root_must_return_ok():  # TRIPLE A
     assert response.json() == {'message': 'Olá Mundo!'}
 
 
-def test_create_user():
-    client = TestClient(app)
-
+def test_create_user(client):
     response = client.post(
         '/users/',
         json={
@@ -33,3 +27,43 @@ def test_create_user():
         'username': 'teste_username',
         'email': 'emailteste@teste.com',
     }
+
+
+def test_read_users(client):
+    response = client.get('/users/')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'users': [
+            {
+                'id': 1,
+                'username': 'teste_username',
+                'email': 'emailteste@teste.com',
+            }
+        ]
+    }
+
+
+def test_update_user(client):
+    response = client.put(
+        '/users/1',
+        json={
+            'id': 1,
+            'username': 'novo_username',
+            'email': 'emailteste@teste.com',
+            'password': 'senha_teste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'id': 1,
+        'username': 'novo_username',
+        'email': 'emailteste@teste.com',
+    }
+
+
+def test_delete_user(client):
+    response = client.delete('/users/1')
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'message': 'User deleted'}
