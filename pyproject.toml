@@ -10,6 +10,8 @@ python = "^3.12"
 fastapi = "^0.115.6"
 pydentic = {extras = ["email"], version = "^0.0.1.dev3"}
 sqlalchemy = "^2.0.36"
+pydantic-settings = "^2.7.1"
+alembic = "^1.14.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -41,6 +43,7 @@ test = 'pytest --cov=fast_zero -vv'
 post_test = 'coverage html'
 lint = 'ruff check . ; ruff check . --diff'
 format = 'ruff check . --fix ; ruff format .'
+update_db = 'alembic revision --autogenerate ; alembic upgrade head'
 
 [build-system]
 requires = ["poetry-core"]
