@@ -1,5 +1,7 @@
 from http import HTTPStatus
 
+from fast_zero.schemas import UserPublic
+
 
 def test_read_root_must_return_ok(client):  # TRIPLE A
     # client = TestClient(app)  # Arrange (organizacao)
@@ -36,13 +38,19 @@ def test_read_users(client):
     assert response.json() == {
         'users': [
             {
-                'id': 1,
-                'username': 'teste_username',
-                'email': 'emailteste@teste.com',
+                
             }
         ]
     }
 
+
+def test_read_users_with_user(client, user):
+    user_schema = UserPublic.model_validate(user).model_dump
+    response = client.get('/users/')
+    
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'users': [user_schema]}
+    
 
 def test_update_user(client):
     response = client.put(
