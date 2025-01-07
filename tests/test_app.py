@@ -46,7 +46,7 @@ def test_read_users_with_user(client, user):
     assert response.json() == {'users': [user_schema]}
 
 
-def test_update_user(client):
+def test_update_user(client, user):
     response = client.put(
         '/users/1',
         json={
@@ -65,7 +65,7 @@ def test_update_user(client):
     }
 
 
-def test_delete_user(client):
+def test_delete_user(client, user):
     response = client.delete('/users/1')
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User deleted'}

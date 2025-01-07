@@ -19,10 +19,5 @@ class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# provisorio (herda atributos do userSchema)
-class UserDB(UserSchema):
-    id: int
-
-
 class UserList(BaseModel):
     users: list[UserPublic]
