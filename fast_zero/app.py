@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from fast_zero.database import get_session
 from fast_zero.models import User
 from fast_zero.schemas import Message, Token, UserList, UserPublic, UserSchema
-from fast_zero.security import create_access_token, get_password_hash, verify_password
+from fast_zero.security import create_access_token, get_password_hash, verify_password, get_current_user
 
 app = FastAPI()
 
@@ -50,7 +50,11 @@ def create_user(user: UserSchema, session=Depends(get_session)):
 
 
 @app.get('/users/', response_model=UserList)  # nao precisa status code OK (standard)
-def read_users(limit: int = 10, skip: int = 0, session: Session = Depends(get_session)):
+def read_users(
+    limit: int = 10, 
+    skip: int = 0, session: Session = Depends(get_session),
+    current_user = Depends(get_current_user)
+    ):
     users = session.scalars(select(User).limit(limit).offset(skip))
     return {'users': users}
 
