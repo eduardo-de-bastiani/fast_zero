@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import or_, select
@@ -17,9 +18,13 @@ router = APIRouter(
     tags=['users'],
 )
 
+# com Annotated, definimos o tipo e atribuimos o valor
+T_Session = Annotated[Session, Depends(get_session)]  # Tipo Session (padronizacao)
+# session: Session = Depends(get_session)   # vamos evitar isso
+
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema, session=Depends(get_session)):
+def create_user(user: UserSchema, session: T_Session):
     # injecao de dependencias (executa a funcao e depois passa como argumento)
     db_user = session.scalar(
         select(User).where(or_(User.username == user.username, User.email == user.email))
@@ -51,9 +56,9 @@ def create_user(user: UserSchema, session=Depends(get_session)):
 
 @router.get('/', response_model=UserList)  # nao precisa status code OK (standard)
 def read_users(
+    session: T_Session,
     limit: int = 10,
     skip: int = 0,
-    session: Session = Depends(get_session),
 ):
     users = session.scalars(select(User).limit(limit).offset(skip))
     return {'users': users}
@@ -63,7 +68,7 @@ def read_users(
 def update_user(
     user_id: int,
     user: UserSchema,
-    session: Session = Depends(get_session),
+    session: T_Session,
     current_user=Depends(get_current_user),
 ):
     if current_user.id != user_id:
@@ -82,8 +87,8 @@ def update_user(
 
 @router.delete('/{user_id}', response_model=Message)
 def delete_user(
+    session: T_Session,
     user_id: int,
-    session: Session = Depends(get_session),
     current_user=Depends(get_current_user),
 ):
     if current_user.id != user_id:
