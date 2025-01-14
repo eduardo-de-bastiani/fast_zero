@@ -19,8 +19,10 @@ router = APIRouter(
 )
 
 # com Annotated, definimos o tipo e atribuimos o valor
+# antes tinhamos ->  session: Session = Depends(get_session)
 T_Session = Annotated[Session, Depends(get_session)]  # Tipo Session (padronizacao)
-# session: Session = Depends(get_session)   # vamos evitar isso
+
+T_CurrentUser = Annotated[User, Depends(get_current_user)]  # Tipo Current_User
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
@@ -69,10 +71,10 @@ def update_user(
     user_id: int,
     user: UserSchema,
     session: T_Session,
-    current_user=Depends(get_current_user),
+    current_user: T_CurrentUser,
 ):
     if current_user.id != user_id:
-        raise HTTPException(HTTPStatus.BAD_REQUEST, detail='Not enough permissions')
+        raise HTTPException(HTTPStatus.FORBIDDEN, detail='Not enough permissions')
 
     current_user.username = user.username
     current_user.email = user.email
@@ -89,10 +91,10 @@ def update_user(
 def delete_user(
     session: T_Session,
     user_id: int,
-    current_user=Depends(get_current_user),
+    current_user: T_CurrentUser,
 ):
     if current_user.id != user_id:
-        raise HTTPException(HTTPStatus.BAD_REQUEST, detail='Not enough permissions')
+        raise HTTPException(HTTPStatus.FORBIDDEN, detail='Not enough permissions')
 
     session.delete(current_user)
     session.commit()
