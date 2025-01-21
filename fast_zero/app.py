@@ -11,6 +11,11 @@ app.include_router(users.router)  # incluindo os endpoints
 app.include_router(auth.router)
 
 
-@app.get('/', status_code=HTTPStatus.OK, response_model=Message)
+@app.get(
+    '/',
+    status_code=HTTPStatus.OK,
+    response_model=Message,
+    responses={'200': {'model': Message}, '404': {'model': Message}},
+)
 def read_root():
     return {'message': 'Olá Mundo!'}
