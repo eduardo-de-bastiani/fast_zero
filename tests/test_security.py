@@ -34,4 +34,4 @@ def test_get_current_user_must_return_jwt_error():
 
 def test_get_current_user_must_return_credentials_exception():
     with pytest.raises(HTTPException):
-        get_current_user({'batata': 123})
+        get_current_user({'sub': 'Jefferson@gmail.com'})
