@@ -39,3 +39,7 @@ class TaskSchema(BaseModel):
 # retorna todo o TaskSchema + id
 class TaskPublic(TaskSchema):
     id: int
+
+
+class TaskList(BaseModel):
+    tasks: list[TaskPublic]
