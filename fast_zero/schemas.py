@@ -36,5 +36,6 @@ class TaskSchema(BaseModel):
     state: TaskState
 
 
+# retorna todo o TaskSchema + id
 class TaskPublic(TaskSchema):
     id: int
