@@ -17,7 +17,7 @@ def test_get_token(client, user):
 
 def test_token_expired_after_time(client, user):
     with freeze_time('2025-01-5 12:00:00'):
-        # gera o token (12:00)
+        # gera o token (mês 1)
         response = client.post(
             '/auth/token', data={'username': user.email, 'password': user.clean_password}
         )
@@ -26,8 +26,8 @@ def test_token_expired_after_time(client, user):
 
         token = response.json()['access_token']
 
-    with freeze_time('2025-01-5 12:31:00'):
-        # Usa o token (12:31)   # expirado!
+    with freeze_time('2025-02-5 12:01:00'):
+        # Usa o token (mês 2)   # expirado!
 
         response = client.put(
             f'/users/{user.id}',
@@ -78,7 +78,7 @@ def test_refresh_token(client, token):
 
 def test_token_expired_dont_refresh(client, user, token):
     with freeze_time('2025-01-5 12:00:00'):
-        # gera o token (12:00)
+        # gera o token (mês 1)
         response = client.post(
             '/auth/token', data={'username': user.email, 'password': user.clean_password}
         )
@@ -86,8 +86,8 @@ def test_token_expired_dont_refresh(client, user, token):
         assert response.status_code == HTTPStatus.OK
         token = response.json()['access_token']
 
-    with freeze_time('2025-01-5 12:31:00'):
-        # Usa o token (12:31)   # expirado!
+    with freeze_time('2025-02-5 12:01:00'):
+        # Usa o token (mês 2)   # expirado!
 
         response = client.post(
             '/auth/refresh_token', data={'Authorization': f'Bearer {token}'}
