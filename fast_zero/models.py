@@ -1,12 +1,12 @@
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import func
+from sqlalchemy import func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, registry
 
 table_registry = registry()
 
-
+# enum dos estados das tasks
 class TaskState(str, Enum):
     draft = 'draft'
     todo = 'todo'
@@ -24,3 +24,16 @@ class User:  # registro escalar
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(init=False, server_default=func.now())
+
+
+@table_registry.mapped_as_dataclass
+class Task:
+    __tablename__ = 'tasks'
+    
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    title: Mapped[str]
+    description: Mapped[str]
+    state: Mapped[TaskState]
+    
+    # relacionamento entre a task e o usuario
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
