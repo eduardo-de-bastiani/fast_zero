@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
+from fast_zero.models import TaskState
+
 
 class Message(BaseModel):
     message: str
@@ -26,3 +28,13 @@ class UserList(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class TaskSchema(BaseModel):
+    title: str
+    description: str
+    state: TaskState
+
+
+class TaskPublic(TaskSchema):
+    id: int

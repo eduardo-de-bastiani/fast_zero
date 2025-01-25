@@ -2,13 +2,14 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from fast_zero.routers import auth, users  # importando os routers
+from fast_zero.routers import auth, tasks, users  # importando os routers
 from fast_zero.schemas import Message
 
 app = FastAPI()
 
 app.include_router(users.router)  # incluindo os endpoints
 app.include_router(auth.router)
+app.include_router(tasks.router)
 
 
 @app.get(
