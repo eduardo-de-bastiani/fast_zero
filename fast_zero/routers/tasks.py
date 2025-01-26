@@ -1,10 +1,10 @@
 from typing import Annotated
-
+from sqlalchemy import select
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
-from fast_zero.models import Task, User
+from fast_zero.models import Task, TaskState, User 
 from fast_zero.schemas import TaskPublic, TaskSchema, TaskList
 from fast_zero.security import get_current_user
 
@@ -36,8 +36,22 @@ def list_tasks(
     user: T_CurrentUser, 
     title: str | None = None,
     description: str | None = None,
-    state: str | None = None,
+    state: TaskState | None = None,
     offset: int | None = None,
     limit: int| None = None,
     ):
-    ...
+    
+    # inicialmente filtra dentro da aplicacao pelo proprio usuario 
+    query = select(Task).where(Task.user_id == user.id)
+    
+    if title:
+        query = query.filter(Task.title.contains(title))  
+    if description:
+        query = query.filter(Task.description.contains(description))
+    if state:
+        query = query.filter(Task.state == state)
+        
+    # pega as tasks filtradas com offset e limit no banco
+    tasks = session.scalars(query.offset(offset).limit(limit)).all()
+    
+    return {'tasks': tasks}

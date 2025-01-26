@@ -1,4 +1,5 @@
 import factory
+import factory.fuzzy
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,7 +8,7 @@ from sqlalchemy.pool import StaticPool
 
 from fast_zero.app import app
 from fast_zero.database import get_session
-from fast_zero.models import User, table_registry
+from fast_zero.models import User, Task, TaskState, table_registry
 from fast_zero.security import get_password_hash
 
 
@@ -21,8 +22,18 @@ class UserFactory(factory.Factory):
     password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
 
 
-# DRY (don't repeat yourself)
+class TaskFactory(factory.Factory):
+    class Meta:
+        model = Task
+    
+    # gera titulo e descricoes aleatorias
+    title = factory.Faker('text')
+    description = factory.Faker('text')
+    # escolhe um estado randomicamente
+    state = factory.fuzzy.FuzzyChoice(TaskState)
+    user_id = 1
 
+# DRY (don't repeat yourself)
 
 # fixture para trocar as sessoes quando testar
 @pytest.fixture
