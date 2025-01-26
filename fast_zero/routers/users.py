@@ -59,8 +59,8 @@ def create_user(user: UserSchema, session: T_Session):
 @router.get('/', response_model=UserList)  # nao precisa status code OK (standard)
 def read_users(
     session: T_Session,
-    limit: int,
-    skip: int,
+    limit: int | None = None,
+    skip: int | None = None,
 ):
     users = session.scalars(select(User).limit(limit).offset(skip))
     return {'users': users}
