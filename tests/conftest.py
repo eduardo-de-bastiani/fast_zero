@@ -12,7 +12,7 @@ from fast_zero.models import Task, TaskState, User, table_registry
 from fast_zero.security import get_password_hash
 
 
-# linha de produção de contrucao de usuarios para testar
+# linha de producao de construcao de usuarios para testar
 class UserFactory(factory.Factory):
     class Meta:
         model = User
