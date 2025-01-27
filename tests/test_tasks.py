@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from fast_zero.models import TaskState
 from tests.conftest import TaskFactory
 
@@ -103,7 +105,7 @@ def test_list_tasks_filter_state_should_return_5_tasks(session, client, user, to
 def test_list_tasks_filter_combined_should_return_5_tasks(session, user, client, token):
     # cria 8 tasks, mas filtra por apenas 5
     expected_tasks = 5
-    
+
     session.bulk_save_objects(
         TaskFactory.create_batch(
             5,
@@ -131,3 +133,23 @@ def test_list_tasks_filter_combined_should_return_5_tasks(session, user, client,
     )
 
     assert len(response.json()['tasks']) == expected_tasks
+
+
+def test_delete_task(session, client, user, token):
+    task = TaskFactory(user_id=user.id)
+    session.add(task)
+    session.commit()
+
+    response = client.delete(
+        f'/tasks/{task.id}', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'message': 'Task deleted successfully'}
+
+
+def test_delete_task_error(client, token):
+    response = client.delete(f'tasks/{10}', headers={'Authorization': f'Bearer {token}'})
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Task not found'}

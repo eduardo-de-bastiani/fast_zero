@@ -1,12 +1,13 @@
+from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
 from fast_zero.models import Task, TaskState, User
-from fast_zero.schemas import TaskList, TaskPublic, TaskSchema
+from fast_zero.schemas import Message, TaskList, TaskPublic, TaskSchema
 from fast_zero.security import get_current_user
 
 router = APIRouter(prefix='/tasks', tags=['tasks'])
@@ -58,3 +59,16 @@ def list_tasks(  # noqa: PLR0913, PLR0917   # ruff ignorar mais de 5 parametros
     tasks = session.scalars(query.offset(offset).limit(limit)).all()
 
     return {'tasks': tasks}
+
+
+@router.delete('/{task_id}', response_model=Message)
+def delete_task(task_id: int, session: T_Session, user: T_CurrentUser):
+    task = session.scalar(select(Task).where(Task.user_id == user.id, Task.id == task_id))
+
+    if not task:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Task not found')
+
+    session.delete(task)
+    session.commit()
+
+    return {'message': 'Task deleted successfully'}
