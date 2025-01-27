@@ -149,7 +149,34 @@ def test_delete_task(session, client, user, token):
 
 
 def test_delete_task_error(client, token):
-    response = client.delete(f'tasks/{10}', headers={'Authorization': f'Bearer {token}'})
+    response = client.delete('tasks/10', headers={'Authorization': f'Bearer {token}'})
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Task not found'}
+
+
+def test_patch_todo(session, client, user, token):
+    task = TaskFactory(user_id=user.id)
+
+    session.add(task)
+    session.commit()
+    session.refresh(task)
+
+    response = client.patch(
+        f'/tasks/{task.id}',
+        json={'title': 'task test!'},
+        headers={'Authorization': f'Bearer {token}'},
+    )
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()['title'] == 'task test!'
+
+
+def test_patch_task_error(client, token):
+    response = client.patch(
+        '/tasks/10',  # manda uma task que nao existe
+        headers={'Authorization': f'Bearer {token}'},
+        json={},  # manda um json vazio (nao alteramos nada)
+    )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {'detail': 'Task not found'}

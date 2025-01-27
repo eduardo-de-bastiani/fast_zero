@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
 from fast_zero.models import Task, TaskState, User
-from fast_zero.schemas import Message, TaskList, TaskPublic, TaskSchema
+from fast_zero.schemas import Message, TaskList, TaskPublic, TaskSchema, TaskUpdate
 from fast_zero.security import get_current_user
 
 router = APIRouter(prefix='/tasks', tags=['tasks'])
@@ -72,3 +72,23 @@ def delete_task(task_id: int, session: T_Session, user: T_CurrentUser):
     session.commit()
 
     return {'message': 'Task deleted successfully'}
+
+
+@router.patch('/{task_id}', response_model=TaskPublic)
+def update_task(task_id: int, session: T_Session, user: T_CurrentUser, task: TaskUpdate):
+    db_task = session.scalar(
+        select(Task).where(Task.id == task_id, Task.user_id == user.id)
+    )
+
+    if not db_task:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Task not found')
+
+    # exclui os valores False do TaskUpdate (campos que nao foram marcados)
+    for key, value in task.model_dump(exclude_unset=True).items():
+        setattr(db_task, key, value)
+
+    session.add(db_task)
+    session.commit()
+    session.refresh(db_task)
+
+    return db_task
