@@ -15,7 +15,9 @@ from fast_zero.models import Task, TaskState, User, table_registry
 from fast_zero.security import get_password_hash
 
 
-@pytest.fixture(scope='session')
+# cria uma unica conexao com o banco (mas sem interdependencia entre os testes)
+@pytest.fixture(scope='session')    # roda a fixture por 'sessao' de teste (apenas 1 vez)
+
 def engine():
     with PostgresContainer('postgres:16', driver='psycopg') as postgres:
         _engine = create_engine(postgres.get_connection_url())
