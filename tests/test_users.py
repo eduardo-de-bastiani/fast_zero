@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fast_zero.schemas import UserPublic
+from tests.conftest import UserFactory
 
 
 def test_create_user(client):
@@ -20,6 +21,44 @@ def test_create_user(client):
         'username': 'teste_username',
         'email': 'emailteste@teste.com',
     }
+
+
+def test_create_user_same_name(client, session):
+    user = UserFactory(username='teste_teste')
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    response = client.post(
+        '/users/',
+        json={
+            'username': 'teste_teste',
+            'email': 'emailteste@teste.com',
+            'password': 'senha_teste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Username already exists'}
+
+
+def test_create_user_same_email(client, session):
+    user = UserFactory(email='emailteste@teste.com')
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    response = client.post(
+        '/users/',
+        json={
+            'username': 'teste_teste',
+            'email': 'emailteste@teste.com',
+            'password': 'senha_teste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Email already exists'}
 
 
 def test_read_users(client):

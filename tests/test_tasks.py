@@ -155,7 +155,7 @@ def test_delete_task_error(client, token):
     assert response.json() == {'detail': 'Task not found'}
 
 
-def test_patch_todo(session, client, user, token):
+def test_patch_task(session, client, user, token):
     task = TaskFactory(user_id=user.id)
 
     session.add(task)
