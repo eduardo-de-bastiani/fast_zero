@@ -5,8 +5,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
+      - name: Copia os arquivos do repositorio
+        uses: actions/checkout@v3 # precisamos do pyproject.toml para instalar as dependencias do poetry
+
       - name: Instalar o Python
-        uses: actions/setup-python@v5   # acao do github para configurar o python
+        uses: actions/setup-python@v5 # acao do github para configurar o python
         with: 
           python-version: '3.12'
+
+      - name: Instalar Poetry
+        run: pipx install poetry
+
+      - name: Instalar dependencias
+        run: poetry install
+
+      - nema: Executar testes
+        run: poetry run task test
