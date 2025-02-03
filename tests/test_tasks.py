@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fast_zero.models import TaskState
-from tests.conftest import TaskFactory
+from tests.factories import TaskFactory
 
 
 def test_create_task(client, token):

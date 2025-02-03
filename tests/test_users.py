@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fast_zero.schemas import UserPublic
-from tests.conftest import UserFactory
+from tests.factories import UserFactory
 
 
 def test_create_user(client):

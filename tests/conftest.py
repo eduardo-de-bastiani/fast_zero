@@ -1,8 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
 
-import factory
-import factory.fuzzy
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
@@ -11,8 +9,9 @@ from testcontainers.postgres import PostgresContainer
 
 from fast_zero.app import app
 from fast_zero.database import get_session
-from fast_zero.models import Task, TaskState, User, table_registry
+from fast_zero.models import table_registry
 from fast_zero.security import get_password_hash
+from tests.factories import UserFactory
 
 
 # cria uma unica conexao com o banco (mas sem interdependencia entre os testes)
@@ -23,26 +22,6 @@ def engine():
 
         with _engine.begin():
             yield _engine
-
-
-# linha de producao de construcao de usuarios para testar
-class UserFactory(factory.Factory):
-    class Meta:
-        model = User
-
-    username = factory.Sequence(lambda n: f'test{n}')
-    email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
-    password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
-
-
-class TaskFactory(factory.Factory):
-    class Meta:
-        model = Task
-
-    title = factory.Faker('text')
-    description = factory.Faker('text')
-    state = factory.fuzzy.FuzzyChoice(TaskState)
-    user_id = 1
 
 
 # DRY (don't repeat yourself)
