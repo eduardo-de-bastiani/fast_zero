@@ -4,7 +4,11 @@ import pytest
 from fastapi.exceptions import HTTPException
 from jwt import decode
 
-from fast_zero.security import create_access_token, get_current_user, settings
+from fast_zero.security import (
+    create_access_token,
+    get_current_user,
+    settings,
+)
 
 
 def test_jwt():
@@ -35,3 +39,20 @@ def test_get_current_user_must_return_jwt_error():
 def test_get_current_user_must_return_credentials_exception():
     with pytest.raises(HTTPException):
         get_current_user({'sub': 'Jefferson@gmail.com'})
+
+
+def test_jwt_valid_token_with_user_not_exists(client, token):
+    # remove o proprio usuario
+    client.delete(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    # tenta remover novamente
+    response = client.delete(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Could not validate credentials'}
