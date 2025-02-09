@@ -41,6 +41,13 @@ def test_get_current_user_must_return_credentials_exception():
         get_current_user({'sub': 'Jefferson@gmail.com'})
 
 
+def test_get_current_user_without_sub():
+    token = create_access_token(data={})
+
+    with pytest.raises(HTTPException):
+        get_current_user(token=token)
+
+
 def test_jwt_valid_token_with_user_not_exists(client, token):
     # remove o proprio usuario
     client.delete(
