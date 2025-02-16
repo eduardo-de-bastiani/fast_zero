@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, registry
@@ -13,7 +14,6 @@ class TaskState(str, Enum):
     todo = 'todo'
     doing = 'doing'
     done = 'done'
-    trash = 'trash'
 
 
 @table_registry.mapped_as_dataclass
@@ -33,7 +33,7 @@ class Task:
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     title: Mapped[str]
-    description: Mapped[str]
+    description: Mapped[Optional[str]] = mapped_column(nullable=True)
     state: Mapped[TaskState]
     created_at: Mapped[datetime] = mapped_column(init=False, server_default=func.now())
 

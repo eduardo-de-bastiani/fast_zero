@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from fast_zero.models import TaskState
@@ -32,7 +34,7 @@ class Token(BaseModel):
 
 class TaskSchema(BaseModel):
     title: str
-    description: str
+    description: Optional[str] = None
     state: TaskState
 
 

@@ -23,6 +23,25 @@ def test_create_task(client, token):
     }
 
 
+def test_create_task_no_description(client, token):
+    response = client.post(
+        '/tasks',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'title': 'testing',
+            'description': None,
+            'state': 'todo',
+        },
+    )
+
+    assert response.json() == {
+        'id': 1,
+        'title': 'testing',
+        'description': None,
+        'state': 'todo',
+    }
+
+
 def test_list_tasks_should_return_5_tasks(session, client, user, token):
     expected_tasks = 5
 
