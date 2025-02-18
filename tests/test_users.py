@@ -61,6 +61,16 @@ def test_create_user_same_email(client, session):
     assert response.json() == {'detail': 'Email already exists'}
 
 
+def test_get_username(client, user, token):
+    response = client.get(
+        '/users/me',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()['username'] == user.username
+
+
 def test_read_users(client):
     response = client.get('/users')
     assert response.status_code == HTTPStatus.OK

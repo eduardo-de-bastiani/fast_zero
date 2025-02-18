@@ -56,6 +56,11 @@ def create_user(user: UserSchema, session: T_Session):
     return db_user
 
 
+@router.get('/me', response_model=UserPublic)
+def get_user(current_user: T_CurrentUser):
+    return current_user
+
+
 @router.get('/', response_model=UserList)  # nao precisa status code OK (standard)
 def read_users(
     session: T_Session,
