@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
 from fast_zero.models import User
-from fast_zero.schemas import Message, UserList, UserPublic, UserSchema
+from fast_zero.schemas import Message, UserCreateSchema, UserList, UserPublic, UserSchema
 from fast_zero.security import (
     get_current_user,
     get_password_hash,
@@ -26,7 +26,7 @@ T_CurrentUser = Annotated[User, Depends(get_current_user)]  # Tipo Current_User
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema, session: T_Session):
+def create_user(user: UserCreateSchema, session: T_Session):
     # injecao de dependencias (executa a funcao e depois passa como argumento)
     db_user = session.scalar(
         select(User).where(or_(User.username == user.username, User.email == user.email))
@@ -83,7 +83,10 @@ def update_user(
 
     current_user.username = user.username
     current_user.email = user.email
-    current_user.password = get_password_hash(user.password)
+
+    # no front, campo inicia vazio. Se n for preenchido, n eh atualizado
+    if user.password:
+        current_user.password = get_password_hash(user.password)
 
     session.add(current_user)
     session.commit()

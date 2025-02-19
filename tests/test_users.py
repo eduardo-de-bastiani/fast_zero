@@ -103,6 +103,26 @@ def test_update_user(client, user, token):
     }
 
 
+def test_update_user_no_password(client, user, token):
+    response = client.put(
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'id': user.id,
+            'username': 'novo_username',
+            'email': 'emailteste@teste.com',
+            'password': None,
+        },
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'id': user.id,
+        'username': 'novo_username',
+        'email': 'emailteste@teste.com',
+    }
+
+
 def test_delete_user(client, user, token):
     response = client.delete(
         f'/users/{user.id}',

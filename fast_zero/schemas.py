@@ -9,10 +9,17 @@ class Message(BaseModel):
     message: str
 
 
-class UserSchema(BaseModel):
+class UserCreateSchema(BaseModel):
     username: str
-    email: EmailStr
+    email: str
     password: str
+
+
+# para atualizacao de usuarios
+class UserSchema(BaseModel):
+    username: Optional[str]
+    email: Optional[EmailStr]
+    password: Optional[str]
 
 
 # schema retornado do usuario (nao queremos retornar senha e ainda nao temos id)
