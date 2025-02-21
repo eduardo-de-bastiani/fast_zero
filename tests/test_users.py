@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fast_zero.schemas import UserPublic
-from tests.factories import UserFactory
+from tests.factories import TaskFactory, UserFactory
 
 
 def test_create_user(client):
@@ -124,6 +124,17 @@ def test_update_user_no_password(client, user, token):
 
 
 def test_delete_user(client, user, token):
+    response = client.delete(
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'message': 'User deleted'}
+
+
+def test_delete_user_with_tasks(client, user, token):
+    TaskFactory.create_batch(5, user_id=user.id)
     response = client.delete(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},

@@ -6,7 +6,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
-from fast_zero.models import User
+from fast_zero.models import Task, User
 from fast_zero.schemas import Message, UserCreateSchema, UserList, UserPublic, UserSchema
 from fast_zero.security import (
     get_current_user,
@@ -103,6 +103,13 @@ def delete_user(
 ):
     if current_user.id != user_id:
         raise HTTPException(HTTPStatus.FORBIDDEN, detail='Not enough permissions')
+
+    tasks = session.scalars(select(Task).where(Task.user_id == user_id)).all()
+
+    for task in tasks:
+        session.delete(task)
+
+    session.commit()
 
     session.delete(current_user)
     session.commit()
