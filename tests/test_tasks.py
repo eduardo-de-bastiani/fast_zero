@@ -167,6 +167,17 @@ def test_get_task(session, client, user, token):
     assert response.json()['title'] == task.title
 
 
+def test_get_unexistent_task(client, token):
+    non_existent_task_id = 999
+
+    response = client.get(
+        f'/tasks/{non_existent_task_id}', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Task not found'}
+
+
 def test_delete_task(session, client, user, token):
     task = TaskFactory(user_id=user.id)
     session.add(task)
