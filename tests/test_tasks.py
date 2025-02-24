@@ -154,6 +154,19 @@ def test_list_tasks_filter_combined_should_return_5_tasks(session, user, client,
     assert len(response.json()['tasks']) == expected_tasks
 
 
+def test_get_task(session, client, user, token):
+    task = TaskFactory(user_id=user.id)
+    session.add(task)
+    session.commit()
+
+    response = client.get(
+        f'/tasks/{task.id}', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()['title'] == task.title
+
+
 def test_delete_task(session, client, user, token):
     task = TaskFactory(user_id=user.id)
     session.add(task)

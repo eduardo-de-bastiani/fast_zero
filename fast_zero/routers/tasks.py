@@ -61,6 +61,16 @@ def list_tasks(  # noqa: PLR0913, PLR0917   # ruff ignorar mais de 5 parametros
     return {'tasks': tasks}
 
 
+@router.get('/{task_id}', response_model=TaskPublic)
+def get_task(task_id: int, session: T_Session, user: T_CurrentUser):
+    task = session.scalar(select(Task).where(Task.user_id == user.id, Task.id == task_id))
+
+    if not task:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Task not found')
+
+    return task
+
+
 @router.delete('/{task_id}', response_model=Message)
 def delete_task(task_id: int, session: T_Session, user: T_CurrentUser):
     task = session.scalar(select(Task).where(Task.user_id == user.id, Task.id == task_id))
